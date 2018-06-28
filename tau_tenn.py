@@ -32,7 +32,7 @@ def run_tglf(inputs,outputs,tglf_model,ne,Te,gridpoint,betap):
 
     kappa0 = 0.5*(1.+kappa1)
     kappa = kappa0*np.ones(101)+(kappa1-kappa0)*r**2/a**2
-    delta = np.linspace(0,delta1,101)+0.5*np.linspace(0,delta1,101)**2
+    delta = 0.5*delta1*(r/a+r**2/a**2)
 
     dlogTdr = np.gradient(Te,dr)/Te
     dlogndr = np.gradient(ne,dr)/ne
@@ -178,7 +178,7 @@ def run_tglf(inputs,outputs,tglf_model,ne,Te,gridpoint,betap):
     if(tglf_model=='nn'):
         model='tglfnn/models/nn_SAT0_mb_1024_abs_reg_common_stair2x2x6.pb'
         with btf_connect(path=model) as tf:
-            qturb = sum(tf.run(nn_inputs)[0,0:2])*q_gb[gridpoint] # Check that you're grabbing correct indices
+            qturb = sum(tf.run(nn_inputs)[0,0:2])*q_gb[gridpoint]
     else:
         #OMFIT['TGLF_GACODE']['input.tglf']=OMFITgacode(input_tglf)
         OMFIT['TGLF_GACODE']['SCRIPTS']['runTGLF'].run()
